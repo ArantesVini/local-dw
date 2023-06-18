@@ -12,9 +12,9 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
 
 ## Pre requisites
 
-- Python
-- Apache Airflow
-- PostgreSQL
+- Python;
+- Apache Airflow;
+- PostgreSQL;
 - Docker
 
 **TODO**
@@ -35,14 +35,14 @@ This project is made by part of the course "Design e Implementação de Data War
 
 #### Dimensions Tables
 
--D_TIME;
--D_PRODUCT;
--D_LOCALE;
--D_CUSTOMER.
+- D_TIME;
+- D_PRODUCT;
+- D_LOCALE;
+- D_CUSTOMER.
 
 #### Fact Table
 
--F_SALES;
+- F_SALES;
 
 ## License
 
