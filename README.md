@@ -1,5 +1,7 @@
 # Local Data Warehouse using Docker
 
+Extract the data from a relational databse, load in another database in a schema only for the staging area, then load into a final schema for the Data Warehouse, in the same database of the staging area, but in another schema. Each database will be a separated container.
+
 ## Objective
 
 Do the entire process of the Data Warehouse for a industrial fictional company called "TechFab S.A.". this company need to get reports for all sectors: production, sales, suppliers, financial, maintenance and quality. This reports and data will be used to take Data Driven Decision to turn TechFab a even bigger company.
@@ -8,7 +10,7 @@ TechFab S.A. is a big company, with more than 700 employees, with two industries
 
 For me, this will be the first Data Warehouse the first data warehouse that I do entirely from the bottom start. Since the business problem identification, data modelling, until the final ETL process and queries to generate the reports needed.
 
-## Prerequisites
+## Pre requisites
 
 - Python
 - Apache Airflow
