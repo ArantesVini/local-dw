@@ -2,7 +2,9 @@
 
 Extract the data from a relational databse, load in another database in a schema only for the staging area, then load into a final schema for the Data Warehouse, in the same database of the staging area, but in another schema. Each database will be a separated container.
 For the source, I use a db called `source_db`, in the schema `dbs`;
-For the staging area and DW i used a db called `destiny_db`, in the schemas `sta` and `dw`
+For the staging area and DW i used a db called `destiny_db`, in the schemas `sta` and `dw`.
+
+In the Extract And Load step, to take the data from the source DB and store it at the staging area DB I will use Airflow with postgres and python operators (all running in Docker), for all the Transformation and final load into the DW, I will use SQL.
 
 ## Objective
 
@@ -27,13 +29,9 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
 
 **TODO**
 
-## About the project
-
-All the data used in this project are fictional, for practice and research purposes only.
-
-This project is made by part of the course "Design e Implementação de Data Warehouses" avaliable at https://www.datascienceacademy.com.br/
-
 ## DataWarehouse modelling
+
+This Data Warehouse uses the Star Schema, with 4 dimensions table and one fact table, for the sales.
 
 #### Dimensions Tables
 
@@ -45,6 +43,12 @@ This project is made by part of the course "Design e Implementação de Data War
 #### Fact Table
 
 - F_SALES;
+
+## About the project
+
+All the data used in this project are fictional, for practice and research purposes only.
+
+This project is made by part of the course "Design e Implementação de Data Warehouses" avaliable at https://www.datascienceacademy.com.br/
 
 ## License
 
