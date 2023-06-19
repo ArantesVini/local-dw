@@ -1,6 +1,8 @@
 # Local Data Warehouse using Docker
 
 Extract the data from a relational databse, load in another database in a schema only for the staging area, then load into a final schema for the Data Warehouse, in the same database of the staging area, but in another schema. Each database will be a separated container.
+For the source, I use a db called `source_db`, in the schema `dbs`;
+For the staging area and DW i used a db called `destiny_db`, in the schemas `sta` and `dw`
 
 ## Objective
 
