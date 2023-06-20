@@ -14,16 +14,17 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
 
 ## Pre requisites
 
-- Python;
-- Apache Airflow;
 - PostgreSQL;
 - Docker
-
-**TODO**
+- Python;
+- Airflow (the Docker version: `https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html`)
 
 ## Repository Structure
 
--`/sql/` all SQL scripts used;
+- `/sql/` all SQL scripts used;
+- `dw_` stands for Data Warehouse scripts;
+- `sr_` is for the source tables;
+- `sta_` is for the staging area scripts;
 
 **TODO**
 
