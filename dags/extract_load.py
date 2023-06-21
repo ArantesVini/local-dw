@@ -22,7 +22,6 @@ default_args = {
 }
 
 def _transfer_data():
-    # Connect to the source database
     source_conn = connect(
         host='source_db',
         database='postgresDB',
@@ -31,7 +30,6 @@ def _transfer_data():
     )
     source_cursor = source_conn.cursor()
 
-    # Connect to the destination database
     dest_conn = connect(
         host='destiny_db',
         database='postgresDB',
@@ -40,17 +38,13 @@ def _transfer_data():
     )
     dest_cursor = dest_conn.cursor()
 
-    # Get a list of all tables in the source schema
     source_cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='dbs'")
     tables = [row[0] for row in source_cursor.fetchall()]
 
-    # Transfer data for each table
     for table in tables:
-        # Select data from the source table
         source_cursor.execute(sql.SQL("SELECT * FROM {}.{}").format(sql.Identifier('dbs'), sql.Identifier(table)))
         rows = source_cursor.fetchall()
 
-        # Check if the destination table exists
         dest_table = f"st_{table}"
         dest_cursor.execute(
             sql.SQL("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='sta' AND table_name={})")
@@ -58,15 +52,12 @@ def _transfer_data():
         )
         table_exists = dest_cursor.fetchone()[0]
 
-        # Truncate and insert data if the table exists, otherwise create the table and insert data
         if table_exists:
             dest_cursor.execute(sql.SQL("TRUNCATE TABLE {}.{}").format(sql.Identifier('sta'), sql.Identifier(dest_table)))
         else:
-            # Get the column names and data types of the source table
             source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_schema='dbs' AND table_name=%s", (table,))
             columns = source_cursor.fetchall()
 
-            # Create the destination table
             create_table_query = sql.SQL("CREATE TABLE IF NOT EXISTS {}.{} (").format(sql.Identifier('sta'), sql.Identifier(dest_table))
             column_definitions = []
             for column in columns:
@@ -75,19 +66,15 @@ def _transfer_data():
             create_table_query += sql.SQL(", ").join(column_definitions) + sql.SQL(")")
             dest_cursor.execute(create_table_query)
 
-        # Generate the INSERT statement
         insert_statement = sql.SQL("INSERT INTO {}.{} VALUES %s").format(sql.Identifier('sta'), sql.Identifier(dest_table))
 
-        # Execute the INSERT statement with the data rows
         execute_values(dest_cursor, insert_statement, rows)
 
-    # Commit the changes in the destination DB and close the connections
     dest_conn.commit()
     source_cursor.close()
     source_conn.close()
     dest_cursor.close()
     dest_conn.close()
-
 
 with DAG(
         dag_id='dw_el_job',
