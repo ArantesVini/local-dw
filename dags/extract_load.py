@@ -1,11 +1,9 @@
-import os
-import csv
-from datetime import timedelta
 import airflow
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from psycopg2 import connect
 from psycopg2.extras import execute_values
+from datetime import timedelta
 
 default_args = {
     'owner': 'airflow',
@@ -17,38 +15,28 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-def _extract_data(**context):
-    rows_dict = []
-    with connect(host='source_db', database='postgresDB', user='dbadmin', password='dbadmin123') as source_conn:
+def _transfer_data(**context):
+    with connect(host='source_db', database='postgresDB', user='dbadmin', password='dbadmin123') as source_conn, \
+            connect(host='destiny_db', database='postgresDB', user='dbadmin', password='dbadmin123') as dest_conn:
         source_cursor = source_conn.cursor()
-        source_cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'dbs'")
-        tables = [row[0] for row in source_cursor.fetchall()]
-        for table in tables:
-            file_path = os.path.join('/opt/airflow/dags/intermediate_data', f'{table}.csv')
-            with open(file_path, 'w') as f:
-                source_cursor.copy_expert(f"COPY {table} TO STDOUT WITH HEADER CSV", f)
-            rows_dict.append({'table': table, 'file_path': file_path})
-    return rows_dict
-
-def _load_data(**context):
-    rows_dict = [row for row in context['ti'].xcom_pull(task_ids='extract_data')]
-
-    with connect(host='destiny_db', database='postgresDB', user='dbadmin', password='dbadmin123') as dest_conn:
         dest_cursor = dest_conn.cursor()
 
-        for row in rows_dict:
-            table = row['table']
-            file_path = row['file_path']
-            dest_table = f"sta.st_{table}"
-            dest_cursor.execute(f"CREATE SCHEMA IF NOT EXISTS sta")
-            dest_cursor.execute(f"CREATE TABLE IF NOT EXISTS {dest_table} (LIKE dbs.{table} INCLUDING ALL) INHERITS (dbs.{table})")
-            dest_cursor.execute(f"TRUNCATE TABLE {dest_table}")
-            with open(file_path, 'r') as f:
-                reader = csv.reader(f)
-                rows = [row for row in reader]
-            execute_values(dest_cursor, f"INSERT INTO {dest_table} VALUES %s", rows)
-
-        dest_conn.commit()
+        source_cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'dbs'")
+        tables = [row[0] for row in source_cursor.fetchall()]
+        print(tables) #TODO
+        for table in tables:
+            dest_table = f"sta.sta_{table}"
+            with open(f"{table}.csv", "w") as f:
+                source_cursor\
+                    .execute(f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'dbs' AND table_name = '{table}'")
+                header = ';'.join([row[0] for row in source_cursor.fetchall()])
+                f.write(header + '\n')
+                print(table)
+                print('*' * 50)
+                source_cursor.copy_to(f, f'"dbs"."{table}"', sep=';')
+                f.seek(0)
+                dest_cursor.copy_from(f, dest_table, sep=';')
+            dest_conn.commit()
 
 with DAG(
         dag_id='dw_el_job',
@@ -59,15 +47,10 @@ with DAG(
         start_date=airflow.utils.dates.days_ago(1),
         ) as dag:
 
-    extract_task = PythonOperator(
-        task_id='extract_data',
-        python_callable=_extract_data
+    transfer_task = PythonOperator(
+        task_id='transfer_data',
+        python_callable=_transfer_data,
+        dag=dag
     )
 
-    load_task = PythonOperator(
-        task_id='load_data',
-        python_callable=_load_data,
-        provide_context=True
-    )
-
-    extract_task >> load_task
+    transfer_task
