@@ -2,7 +2,6 @@ import airflow
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from psycopg2 import connect
-from psycopg2.extras import execute_values
 from datetime import timedelta
 
 default_args = {
@@ -21,21 +20,18 @@ def _transfer_data(**context):
         source_cursor = source_conn.cursor()
         dest_cursor = dest_conn.cursor()
 
-        source_cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'dbs'")
-        tables = [row[0] for row in source_cursor.fetchall()]
-        print(tables) #TODO
+        tables = ['sr_categories', 'sr_subcategory', 'sr_products',\
+            'sr_cities', 'sr_localities', 'sr_customer_type', 'sr_customers', 'sr_sales']
+        
         for table in tables:
             dest_table = f"sta.sta_{table}"
-            with open(f"{table}.csv", "w") as f:
-                source_cursor\
-                    .execute(f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'dbs' AND table_name = '{table}'")
-                header = ';'.join([row[0] for row in source_cursor.fetchall()])
-                f.write(header + '\n')
-                print(table)
-                print('*' * 50)
-                source_cursor.copy_to(f, f'"dbs"."{table}"', sep=';')
-                f.seek(0)
-                dest_cursor.copy_from(f, dest_table, sep=';')
+            source_cursor.execute(f"SELECT * FROM dbs.{table}")
+            rows = source_cursor.fetchall()
+            
+            for row in rows:
+                insert_query = f"INSERT INTO {dest_table} VALUES %s"
+                dest_cursor.execute(insert_query, (row,))
+            
             dest_conn.commit()
 
 with DAG(
