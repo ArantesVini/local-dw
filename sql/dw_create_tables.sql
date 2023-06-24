@@ -1,22 +1,22 @@
 -- Dimension Time table
-CREATE TABLE d_time (
-  time_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE dw.d_time (
+  time_id INT PRIMARY KEY,
   time_year INT NOT NULL,
   time_month INT NOT NULL,
   time_day INT NOT NULL
 );
 
 -- Dimension Product table
-CREATE TABLE d_product (
-  product_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE dw.d_product (
+  product_id INT PRIMARY KEY,
   product_name VARCHAR(50) NOT NULL,
   product_category VARCHAR(50) NOT NULL,
   product_subcategory VARCHAR(50) NOT NULL
 );
 
 -- Dimension Locale table
-CREATE TABLE d_locale (
-  locale_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE dw.d_locale (
+  locale_id INT PRIMARY KEY,
   locale_country VARCHAR(50) NOT NULL,
   locale_region VARCHAR(50) NOT NULL,
   locale_state VARCHAR(50) NOT NULL,
@@ -24,14 +24,14 @@ CREATE TABLE d_locale (
 );
 
 -- Dimension Customer table
-CREATE TABLE d_customer (
-  customer_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE dw.d_customer (
+  customer_id INT PRIMARY KEY,
   customer_name VARCHAR(50) NOT NULL,
   customer_type VARCHAR(50) NOT NULL
 );
 
 -- Fact Sales table
-CREATE TABLE fact_sales (
+CREATE TABLE dw.fact_sales (
   product_id INT NOT NULL,
   customer_id INT NOT NULL,
   locale_id INT NOT NULL,
