@@ -24,11 +24,12 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
 ## Repository Structure
 
 - `/sql/` all SQL scripts used;
-- `dw_` stands for Data Warehouse scripts;
-- `sr_` is for the source tables;
-- `sta_` is for the staging area scripts;
 
-**TODO**
+  - `dw_` stands for Data Warehouse scripts;
+  - `sr_` is for the source tables;
+  - `sta_` is for the staging area scripts; -`/etl/` scripts used to do the ETL process in the staging area to the dw;
+
+- `/dags/` Apache Airflow DAG to transfer data between source_db an stagin area in destiny_db;
 
 ## DataWarehouse modelling
 
