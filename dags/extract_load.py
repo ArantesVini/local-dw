@@ -11,7 +11,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=15),
 }
 
 def _transfer_data(**context):
@@ -27,11 +27,9 @@ def _transfer_data(**context):
             dest_table = f"sta.sta_{table}"
             source_cursor.execute(f"SELECT * FROM dbs.{table}")
             rows = source_cursor.fetchall()
-            
             for row in rows:
                 insert_query = f"INSERT INTO {dest_table} VALUES %s"
                 dest_cursor.execute(insert_query, (row,))
-            
             dest_conn.commit()
 
 with DAG(
