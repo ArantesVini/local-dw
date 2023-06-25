@@ -1,14 +1,17 @@
 -- Dimension Time table
 CREATE TABLE dw.d_time (
-  time_id INT PRIMARY KEY,
+  sk_time SERIAL PRIMARY KEY,
+  time_date DATE,
   time_year INT NOT NULL,
   time_month INT NOT NULL,
   time_day INT NOT NULL
+  
 );
 
 -- Dimension Product table
 CREATE TABLE dw.d_product (
-  product_id INT PRIMARY KEY,
+  sk_product SERIAL PRIMARY KEY,
+  product_id INT NOT NULL,
   product_name VARCHAR(50) NOT NULL,
   product_category VARCHAR(50) NOT NULL,
   product_subcategory VARCHAR(50) NOT NULL
@@ -16,7 +19,8 @@ CREATE TABLE dw.d_product (
 
 -- Dimension Locale table
 CREATE TABLE dw.d_locale (
-  locale_id INT PRIMARY KEY,
+  sk_locale SERIAL PRIMARY KEY,
+  locale_id INT NOT NULL,
   locale_country VARCHAR(50) NOT NULL,
   locale_region VARCHAR(50) NOT NULL,
   locale_state VARCHAR(50) NOT NULL,
@@ -25,24 +29,25 @@ CREATE TABLE dw.d_locale (
 
 -- Dimension Customer table
 CREATE TABLE dw.d_customer (
-  customer_id INT PRIMARY KEY,
+  sk_customer SERIAL PRIMARY KEY,
+  customer_id INT NOT NULL,
   customer_name VARCHAR(50) NOT NULL,
   customer_type VARCHAR(50) NOT NULL
 );
 
 -- Fact Sales table
 CREATE TABLE dw.fact_sales (
-  product_id INT NOT NULL,
-  customer_id INT NOT NULL,
-  locale_id INT NOT NULL,
-  time_id INT NOT NULL,
+  sk_product INT NOT NULL,
+  sk_customer INT NOT NULL,
+  sk_locale INT NOT NULL,
+  sk_time INT NOT NULL,
   quantity INT NOT NULL,
   price_sale DECIMAL(10,2) NOT NULL,
   price_product DECIMAL(10,2) NOT NULL,
   sales_revenue DECIMAL(10,2) NOT NULL,
-  PRIMARY KEY (product_id, customer_id, locale_id, time_id),
-  FOREIGN KEY (product_id) REFERENCES d_product (product_id),
-  FOREIGN KEY (customer_id) REFERENCES d_customer (customer_id),
-  FOREIGN KEY (locale_id) REFERENCES d_locale (locale_id),
-  FOREIGN KEY (time_id) REFERENCES d_time (time_id)
+  PRIMARY KEY (sk_product, sk_customer, sk_locale, sk_time),
+  FOREIGN KEY (sk_product) REFERENCES d_product (sk_product),
+  FOREIGN KEY (sk_customer) REFERENCES d_customer (sk_customer),
+  FOREIGN KEY (sk_locale) REFERENCES d_locale (sk_locale),
+  FOREIGN KEY (sk_time) REFERENCES d_time (sk_time)
 );
