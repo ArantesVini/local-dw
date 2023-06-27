@@ -47,7 +47,7 @@ CREATE TABLE sta.sta_sr_sales (
   sale_product INT NOT NULL,
   customer_id INT NOT NULL,
   locality_id INT NOT NULL,
-  sale_date DATE NULL,
+  sale_date TIMESTAMP NULL,
   sale_quantity INT NOT NULL,
   sale_price DECIMAL(10,2) NOT NULL,
   product_cost DECIMAL(10,2) NOT NULL

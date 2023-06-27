@@ -26,6 +26,8 @@ def _transfer_data(**context):
         for table in tables:
             dest_table = f"sta.sta_{table}"
             source_cursor.execute(f"SELECT * FROM dbs.{table}")
+            truncate_query = f"TRUNCATE TABLE {dest_table} CASCADE"
+            dest_cursor.execute(truncate_query)
             rows = source_cursor.fetchall()
             for row in rows:
                 insert_query = f"INSERT INTO {dest_table} VALUES %s"
