@@ -6,6 +6,8 @@ For the staging area and DW i used a db called `destiny_db`, in the schemas `sta
 
 In the Extract And Load step, to take the data from the source DB and store it at the staging area DB I will use Airflow with postgres and python operators (all running in Docker), for all the Transformation and final load into the DW, I will use SQL.
 
+After the implementation, the business area and the Data Analysts start to understand the value of a DW for a company, so the initial granularity, of day, need to be passed as hour.
+
 ## Objective
 
 Do the entire process of the Data Warehouse for a industrial fictional company called "TechFab S.A.". this company need to get reports for all sectors: production, sales, suppliers, financial, maintenance and quality. This reports and data will be used to take Data Driven Decision to turn TechFab a even bigger company.
@@ -27,7 +29,9 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
 
   - `dw_` stands for Data Warehouse scripts;
   - `sr_` is for the source tables;
-  - `sta_` is for the staging area scripts; -`/etl/` scripts used to do the ETL process in the staging area to the dw;
+  - `sta_` is for the staging area scripts;
+  - `/etl/` scripts used to do the ETL process in the staging area to the dw;
+  - `/change_granularity/` this project simulates a case when the business area want to change the time granularity after the DW implementation, in this folder are the SQL scripts to do that;
 
 - `/dags/` Apache Airflow DAG to transfer data between source_db an stagin area in destiny_db;
 
