@@ -34,6 +34,13 @@ def _transfer_data(**context):
                 dest_cursor.execute(insert_query, (row,))
             dest_conn.commit()
 
+def _refresh_materialized_view(mv_name):
+    with connect(host='destiny_db', database='postgresDB', user='dbadmin', password='dbadmin123') as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(f'REFRESH MATERIALIZED VIEW {mv_name};')
+        
+        conn.commit()
+
 with DAG(
         dag_id='dw_el_job',
         default_args=default_args,
@@ -48,5 +55,12 @@ with DAG(
         python_callable=_transfer_data,
         dag=dag
     )
+    
+    refresh_mv_task = PythonOperator(
+        task_id='refresh_mv',
+        python_callable=_refresh_materialized_view,
+        op_kwargs={'mv_name': 'dw.mv_report'},
+        dag=dag,
+    )
 
-    transfer_task
+    transfer_task >> refresh_mv_task
