@@ -42,23 +42,17 @@ SELECT
         ) - product_cost
     ) AS sales_result
 FROM
-    sta.sta_sr_sales tb1,
-    sta.sta_sr_customers tb2,
-    sta.sta_sr_localities tb3,
-    sta.sta_sr_products tb4,
-    dw.d_time tb5,
-    dw.d_product tb6,
-    dw.d_locale tb7,
-    dw.d_customer tb8
-WHERE
-    tb2.customer_id = tb1.customer_id
-    AND tb3.locality_id = tb1.locality_id
-    AND tb4.product_id = tb1.sale_product
-    AND to_char(tb1.sale_date, 'YYYY-MM-DD') = to_char(tb5.time_date, 'YYYY-MM-DD')
-    AND to_char(tb1.sale_date, 'HH') = tb5.time_hour
-    AND tb2.customer_id = tb8.customer_id
-    AND tb3.locality_id = tb7.locale_id
-    AND tb4.product_id = tb6.product_id
+    sta.sta_sr_sales tb1
+    JOIN sta.sta_sr_customers tb2 ON tb2.customer_id = tb1.customer_id
+    JOIN sta.sta_sr_products tb4 ON tb4.product_id = tb1.sale_product
+    JOIN dw.d_time tb5 ON (
+        to_char(tb5.time_date, 'YYYY-MM-DD') = to_char(tb1.sale_date, 'YYYY-MM-DD')
+        AND tb5.time_hour = to_char(tb1.sale_date, 'HH')
+    )
+    JOIN dw.d_product tb6 ON tb4.product_id = tb6.product_id
+    JOIN sta.sta_sr_localities tb3 ON tb3.locality_id = tb1.locality_id -- TODO problem
+    JOIN dw.d_locale tb7 ON tb3.locality_id = tb7.locale_id -- TODO problem
+    JOIN dw.d_customer tb8 ON tb2.customer_id = tb8.customer_id
 GROUP BY
     sk_product,
     sk_customer,
