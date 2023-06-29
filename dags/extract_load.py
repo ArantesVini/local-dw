@@ -13,7 +13,7 @@ default_args = {
     'retries': 1,
     'retry_delay': timedelta(minutes=15),
 }
-
+# TODO erro on dw.d_locale load
 sql_load_dimensions_queries = {
     "d_time": """
     TRUNCATE TABLE dw.d_time CASCADE;
@@ -68,7 +68,7 @@ sql_load_dimensions_queries = {
 """,
     "d_locale":
     """
-        TRUNCATE TABLE d_locale CASCADE;
+        TRUNCATE TABLE dw.d_locale CASCADE;
         INSERT INTO dw.d_locale (
         locale_id, 
         locale_country, 
