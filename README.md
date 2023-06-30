@@ -1,12 +1,14 @@
-# Local Data Warehouse using Docker
+# TechFab Data Warehouse
 
-Extract the data from a relational databse, load in another database in a schema only for the staging area, then load into a final schema for the Data Warehouse, in the same database of the staging area, but in another schema. Each database will be a separated container.
-For the source, I use a db called `source_db`, in the schema `dbs`;
-For the staging area and DW i used a db called `destiny_db`, in the schemas `sta` and `dw`.
+## Project Overview
 
-In the Extract And Load step, to take the data from the source DB and store it at the staging area DB I will use Airflow with postgres and python operators (all running in Docker), for all the Transformation and final load into the DW, I will use SQL.
+The TechFab Data Warehouse project aims to build a local data warehouse using Docker for TechFab S.A., a fictional industrial company. The data warehouse will enable data-driven decision-making across various sectors such as production, sales, suppliers, finance, maintenance, and quality. By leveraging the power of a data warehouse, TechFab S.A. aims to enhance operational efficiency, identify growth opportunities, and drive the company's success.
 
-After the implementation, the business area and the Data Analysts start to understand the value of a DW for a company, so the initial granularity, of day, need to be passed as hour.
+## Architeture Explanaition
+
+The data warehouse follows a multi-step process, involving the extraction of data from a relational database, loading it into a staging area, and then loading it into the final data warehouse. Each step is performed in separate Docker containers. The source database is named source_db, located in the dbs schema. The staging area and the data warehouse reside in the destiny_db, with the staging area in the sta schema and the data warehouse in the dw schema.
+
+For the Extract and Load step, Apache Airflow with PostgreSQL and Python operators is utilized. The Airflow DAG, running within a Docker container, extracts data from the source DB and stores it in the staging area DB. The transformation and final loading into the data warehouse are performed using SQL scripts.
 
 ## Objective
 
@@ -31,9 +33,14 @@ For me, this will be the first Data Warehouse the first data warehouse that I do
   - `sr_` is for the source tables;
   - `sta_` is for the staging area scripts;
   - `/etl/` scripts used to do the ETL process in the staging area to the dw;
-  - `/change_granularity/` this project simulates a case when the business area want to change the time granularity after the DW implementation, in this folder are the SQL scripts to do that;
+  - `/change_granularity/` SQL scripts to change time granularity after the DW implementation;
 
 - `/dags/` Apache Airflow DAG to transfer data between source_db an stagin area in destiny_db;
+  Note that the DAG does not include the script to load the source database tables, as it is not logical to do so.
+
+  ## Project Objective
+
+The main objective of this project is to develop a comprehensive data warehouse solution for TechFab S.A. This data warehouse will provide insights and reports for all sectors of the company, including production, sales, suppliers, finance, maintenance, and quality. By leveraging the data and reports generated, TechFab S.A. aims to make data-driven decisions to propel the company's growth and success.
 
 ## DataWarehouse modelling
 
@@ -49,6 +56,16 @@ This Data Warehouse uses the Star Schema, with 4 dimensions table and one fact t
 #### Fact Table
 
 - F_SALES;
+
+## Usage instructions
+
+- Clone this repository to your local machine;
+- Install the required dependencies (PostgreSQL, Docker, Python, and Airflow);
+- Set up the PostgreSQL databases for the source, staging area, and data warehouse;
+- Run the source_db initial load in pgAdmin;
+- Configure the Airflow DAG to connect to the source and staging area databases;
+- Execute the Airflow DAG to perform the Extract and Load process;
+- Generate reports and perform data analysis using SQL queries on the data warehouse;
 
 ## About the project
 
