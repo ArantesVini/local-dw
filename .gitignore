@@ -3,3 +3,5 @@ utils_infos.txt
 /logs/
 /dags/intermediate_data/
 /useful_scripts/
+*.sql linguist-detectable=true
+*.sql linguist-language=SQL
